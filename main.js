@@ -1,10 +1,15 @@
 import Block from './block.js';
 import Blockchain from './blockchain';
+import Transaction from './transaction';
 
 let taurine = new Blockchain();
-console.log("Mining block 1...");
-let testCoin = new Block(1, "08/06/2021", { amount: 1});
-taurine.addBlock(testCoin);
-console.log("Mining block 2...");
-let testCoin2 = new Block(2, "08/06/2021", { amount: 2});
-taurine.addBlock(testCoin2);
+
+taurine.createTransaction(new Transaction('bron','keegan', 100)); // address will be public keys
+taurine.createTransaction(new Transaction('keegan','bron', 50));
+
+console.log('\nStarting the miner...');
+taurine.minePendingTransactions('mrShark');
+console.log("mrShark has ", taurine.getBalanceOfAddress('mrShark'));
+console.log('\nStarting the miner again...');
+taurine.minePendingTransactions('mrShark');
+console.log("mrShark has ", taurine.getBalanceOfAddress('mrShark'));
