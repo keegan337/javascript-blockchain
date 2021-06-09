@@ -2,5 +2,11 @@
   "dependencies": {
     "crypto-js": "^4.0.0",
     "esm": "^3.2.25"
+  },
+  "devDependencies": {
+    "mocha": "^9.0.0"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
