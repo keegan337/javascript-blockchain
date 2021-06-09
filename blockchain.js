@@ -2,6 +2,7 @@ import Block from './block';
 export default class Blockchain {
     constructor() {
         this.chain = [this.creatGenesisBlock()];
+        this.difficulty = 2;
     }
 
     creatGenesisBlock(){
@@ -14,7 +15,7 @@ export default class Blockchain {
 
     addBlock(newBlock) {
         newBlock.previousHash = this.getLatestBlock().hash;
-        newBlock.hash = newBlock.calculateHash();
+        newBlock.mineBlock(this.difficulty);
         this.chain.push(newBlock);
     }
     isChainValid(){
