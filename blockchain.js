@@ -3,13 +3,13 @@ import Transaction from './transaction'
 export default class Blockchain {
     constructor() {
         this.chain = [this.creatGenesisBlock()];
-        this.difficulty = 5;
+        this.difficulty = 2;
         this.pendingTransactions = [];
         this.miningReward = 1;
     }
 
     creatGenesisBlock(){
-        return new Block("09/05/1998", "From 0 to 1");
+        return new Block("09/05/1998", "From 0 to 1", null);
     }
 
     getLatestBlock() {
@@ -17,7 +17,7 @@ export default class Blockchain {
     }
 
     minePendingTransactions(miningRewardAddress){
-        let block = new Block(Date.now(), this.pendingTransactions); // TODO miners need to be able to pick their transactions
+        let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash); // TODO miners need to be able to pick their transactions
         block.mineBlock(this.difficulty);
         console.log("Block succesfully mined!");
         this.chain.push(block);
@@ -26,7 +26,13 @@ export default class Blockchain {
         ];
     }
 
-    createTransaction(transaction){
+    addTranscation(transaction){
+        if(!transaction.fromAddress || !transaction.toAddress) {
+            throw new Error('Transaction must include to and from address');
+        }
+        if(!transaction.isValid()) {
+            throw new Error('Invalid transaction. Cannot add it to the chain');
+        }
         this.pendingTransactions.push(transaction);
     }
 
@@ -50,13 +56,23 @@ export default class Blockchain {
         for(let i = 1; i < this.chain.length; i++) {
             const currentBlock = this.chain[i];
             const previousBlock = this.chain[i-1];
-
-            if(currentBlock.hash !== currentBlock.calculateHash()) {
+            
+            if(!currentBlock.hasValidTransaction()) 
+            {
+                console.log("Invalid transaction", i);
                 return false;
             }
+            if(currentBlock.hash !== currentBlock.calculateHash()) {
+                console.log("Hashes don't match", i);
+                return false;           
+            }
             if(currentBlock.previousHash !== previousBlock.hash) {
+                console.log("Previous block's hash doesn't match", i);
+                console.log(previousBlock.hash)
+                console.log(currentBlock.previousHash)
                 return false
             }
+
         }
         return true;
     }
